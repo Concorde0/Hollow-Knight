@@ -6,6 +6,7 @@ using Zenject;
 public class Player : Character
 {
     [Inject] private PlayerInputController _input;
+    [Inject] private PlayerMotor _motor;
     
     private void Start()
     {
@@ -15,7 +16,7 @@ public class Player : Character
 
     protected override void Awake()
     {
-     
+        
     }
 
     protected override void Attack()
@@ -25,6 +26,7 @@ public class Player : Character
 
     protected override void Die()
     {
+        
         
     }
 }

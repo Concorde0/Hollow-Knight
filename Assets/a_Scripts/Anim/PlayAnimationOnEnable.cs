@@ -1,9 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Animancer;
-using HollowKnight.Input;
+using HollowKnight.Param;
 using UnityEngine;
+using Zenject;
 
 namespace HollowKnight.Anim
 {
@@ -12,22 +10,19 @@ namespace HollowKnight.Anim
         [SerializeField] private AnimancerComponent animancer;
         [SerializeField] private AnimationClip _Move;
         [SerializeField] private AnimationClip _Idle;
-        private PlayerInputController _playerInputController;
 
-        private void Awake()
-        {
-            _playerInputController = GetComponent<PlayerInputController>();
-        }
+        private PlayerParam _param;
 
-        private void OnEnable()
+        [Inject]
+        public void Construct(PlayerParam param)
         {
-            
+            _param = param;
         }
 
         private void Update()
         {
-            animancer.Play(_playerInputController.inputDir.x != 0 ? _Move : _Idle);
+            if (animancer == null) return;
+            animancer.Play(_param.inputDir.x != 0 ? _Move : _Idle);
         }
     }
 }
-
