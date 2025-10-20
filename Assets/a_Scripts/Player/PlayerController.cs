@@ -1,18 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using HollowKnight.Input;
 using UnityEngine;
+using Zenject;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Character
 {
-    // Start is called before the first frame update
-    void Start()
+    [Inject] private PlayerInputController _input;
+    [Inject] private PlayerMotor _motor;
+   
+    
+    private void Start()
+    {
+        Debug.Log(_input != null ? "Input注入成功" : "Input注入失败");
+    }
+    
+
+    protected override void Attack()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override void Die()
     {
+        
         
     }
 }

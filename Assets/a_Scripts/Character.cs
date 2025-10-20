@@ -1,40 +1,30 @@
 using UnityEngine;
-using System;
 using System.Collections.Generic;
-
+using Zenject;
 
 public abstract class Character : MonoBehaviour
 {
-    [SerializeField] protected CharacterData characterData;
     [SerializeField] private CollisionConfig collisionConfig;
+    [Inject] private CharacterData _data;
 
-    private Dictionary<CollisionDirection, bool> collisionStates = new Dictionary<CollisionDirection, bool>();
+    private Dictionary<CollisionDirection, bool> collisionStates = new();
 
+    #region Data
+    public string CharacterName { get; protected set; }
+    public int Level { get; protected set; }
+    public float MaxHealth { get; protected set; }
+    public float CurrentHealth { get; protected set; }
+    public float MoveSpeed { get; protected set; }
+    public float AttackPower { get; protected set; }
+    public CharacterType CharacterType { get; protected set; }
 
-    public string CharacterName { get; private set; }
+    public bool IsHit { get; protected set; }
+    public bool IsDead { get; protected set; }
+    public bool InVincibleDuration { get; protected set; }
+    public float VincibleTimer { get; protected set; }
+    #endregion
 
-    public int Level { get; private set; }
-    public float MaxHealth { get; private set; }
-    public float CurrentHealth { get; private set; }
-    public float MoveSpeed { get; private set; }
-    public float AttackPower { get; private set; }
-    public CharacterType CharacterType { get; private set; }
-    
-    public bool IsHit { get; private set; }
-    public bool IsDead { get; private set; }
-    public bool InVincibleDuration { get; private set; }
-    public float VincibleTimer { get; private set; }
-
-
-    protected virtual void Awake()
-    {
-        if (characterData != null)
-        {
-            LoadData(characterData);
-        }
-    }
-
-    protected virtual void LoadData(CharacterData data)
+    public virtual void Init(CharacterData data)
     {
         CharacterName = data.characterName;
         CharacterType = data.characterType;
@@ -47,25 +37,23 @@ public abstract class Character : MonoBehaviour
         IsDead = false;
         InVincibleDuration = false;
     }
+    
+    public virtual void Awake()
+    {
+        Init(_data);
+    }
 
     public virtual void TakeDamage(float damage)
     {
         CurrentHealth -= damage;
     }
 
-
-    public virtual void Move(Vector3 direction)
-    {
-        
-    }
+    public virtual void Move(Vector3 direction) { }
 
     protected abstract void Attack();
     protected abstract void Die();
 
-    protected virtual void FixedUpdate()
-    {
-        UpdateCollisionStates();
-    }
+    protected virtual void FixedUpdate() => UpdateCollisionStates();
 
     private void UpdateCollisionStates()
     {
@@ -81,13 +69,9 @@ public abstract class Character : MonoBehaviour
             collisionStates[check.direction] = isHit;
 
             Debug.DrawLine(worldOrigin, worldOrigin + worldDir * check.checkDistance, isHit ? Color.red : Color.green);
-            
         }
+    }
 
-        
-    }
-    public bool IsColliding(CollisionDirection dir)
-    {
-        return collisionStates.ContainsKey(dir) && collisionStates[dir];
-    }
+    protected bool IsColliding(CollisionDirection dir) =>
+        collisionStates.ContainsKey(dir) && collisionStates[dir];
 }

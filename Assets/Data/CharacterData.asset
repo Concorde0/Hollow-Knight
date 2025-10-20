@@ -16,6 +16,6 @@ MonoBehaviour:
   characterID: 1
   characterType: 0
   maxHealth: 100
-  moveSpeed: 2
+  moveSpeed: 5
   attackPower: 10
-  defense: 0
+  vincibleTimer: 0
