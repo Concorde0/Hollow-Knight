@@ -19,7 +19,6 @@ public class PlayerInstaller : MonoInstaller
         Container.Bind<PlayerMotor>().FromInstance(playerMotor).AsSingle();
         Container.Bind<PlayerParam>().AsSingle();
         
-        Container.Bind<Transform>().WithId("PlayerModel").FromInstance(model).AsSingle();
         Container.Bind<CharacterData>().FromInstance(playerData).AsSingle();
     }
 }

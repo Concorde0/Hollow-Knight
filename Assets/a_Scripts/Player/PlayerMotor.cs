@@ -5,15 +5,14 @@ using Zenject;
 
 public class PlayerMotor : MonoBehaviour
 {
-    private Transform _model;
+    [SerializeField] private Transform _model;
     private PlayerParam _param;
     private CharacterData _data;
 
     [Inject]
-    public void Construct(PlayerParam param, [Inject(Id = "PlayerModel")] Transform model, CharacterData data)
+    public void Construct(PlayerParam param, CharacterData data)
     {
         _param = param;
-        _model = model;
         _data = data;
     }
 
@@ -36,7 +35,6 @@ public class PlayerMotor : MonoBehaviour
             transform.position += (Vector3)move;
         }
     }
-
     private void Flip()
     {
         if (_model == null) return;
@@ -54,4 +52,11 @@ public class PlayerMotor : MonoBehaviour
             _model.localScale = new Vector3(_param.faceDir, 2, 2);
         }
     }
+
+    private void Jump()
+    {
+        
+    }
+    
+    
 }

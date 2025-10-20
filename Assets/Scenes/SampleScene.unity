@@ -748,6 +748,10 @@ MonoBehaviour:
   animancer: {fileID: 1357352109}
   _Move: {fileID: 7400000, guid: f701c298397b5054eb97d5abfb1b940c, type: 2}
   _Idle: {fileID: 7400000, guid: f4ea13bfa09e9c746b99ff48cc86c535, type: 2}
+  _JumpUp: {fileID: 7400000, guid: 680b9e70b8c74b7488400f7a7f377bb6, type: 2}
+  _JumpLoop: {fileID: 7400000, guid: 8c650a0524db8914d80df3907e362479, type: 2}
+  _JumpSoft: {fileID: 7400000, guid: 359be8f65f4e5724a8bd8405f4ffa1a1, type: 2}
+  _JumpHard: {fileID: 7400000, guid: 524ef75d2464832499291280b0642aa9, type: 2}
 --- !u!114 &1357352111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -760,6 +764,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 907b662582640d5459740ccfd9247e17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _model: {fileID: 1357352098}
 --- !u!114 &1357352112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -772,7 +777,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81a375594f1459048a39b00ed4e3842b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterData: {fileID: 11400000, guid: 8834236f7da853e43a5a5772bde4fb65, type: 2}
   collisionConfig: {fileID: 11400000, guid: 2dc526fdbf176a04d802547ecc035bf9, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
