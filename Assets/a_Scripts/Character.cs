@@ -18,8 +18,12 @@ public abstract class Character : MonoBehaviour
     public float CurrentHealth { get; private set; }
     public float MoveSpeed { get; private set; }
     public float AttackPower { get; private set; }
-
-    public CharacterType characterType { get; private set; }
+    public CharacterType CharacterType { get; private set; }
+    
+    public bool IsHit { get; private set; }
+    public bool IsDead { get; private set; }
+    public bool InVincibleDuration { get; private set; }
+    public float VincibleTimer { get; private set; }
 
 
     protected virtual void Awake()
@@ -33,31 +37,30 @@ public abstract class Character : MonoBehaviour
     protected virtual void LoadData(CharacterData data)
     {
         CharacterName = data.characterName;
-        characterType = data.characterType;
+        CharacterType = data.characterType;
         MaxHealth = data.maxHealth;
         CurrentHealth = MaxHealth;
         MoveSpeed = data.moveSpeed;
         AttackPower = data.attackPower;
+        VincibleTimer = data.vincibleTimer;
+        IsHit = false;
+        IsDead = false;
+        InVincibleDuration = false;
     }
 
     public virtual void TakeDamage(float damage)
     {
-
+        CurrentHealth -= damage;
     }
 
 
     public virtual void Move(Vector3 direction)
     {
-
+        
     }
 
     protected abstract void Attack();
     protected abstract void Die();
-
-    protected virtual void Update()
-    {
-
-    }
 
     protected virtual void FixedUpdate()
     {

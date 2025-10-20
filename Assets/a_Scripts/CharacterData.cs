@@ -18,4 +18,7 @@ public class CharacterData : ScriptableObject
 
     [Header("战斗属性")]
     public float attackPower;
+
+    [Header("其他")] 
+    public float vincibleTimer;
 }
