@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Zenject;
 
-public abstract class Character : MonoBehaviour
+public abstract class Character : MonoBehaviour, ICollisionDetector
 {
     [SerializeField] private CollisionConfig collisionConfig;
     [Inject] private CharacterData _data;
@@ -72,6 +72,11 @@ public abstract class Character : MonoBehaviour
         }
     }
 
-    protected bool IsColliding(CollisionDirection dir) =>
-        collisionStates.ContainsKey(dir) && collisionStates[dir];
+    public bool IsColliding(CollisionDirection dir) => collisionStates.ContainsKey(dir) && collisionStates[dir];
 }
+
+public interface ICollisionDetector
+{
+    bool IsColliding(CollisionDirection dir);
+}
+

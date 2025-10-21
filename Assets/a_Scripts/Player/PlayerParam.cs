@@ -7,6 +7,8 @@ namespace HollowKnight.Param
     {
         public Vector2 inputDir { get; set; }
         public int faceDir { get; set; }
+        
+        public bool jumpHeld { get; set; }
     }
 }
 

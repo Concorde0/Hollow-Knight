@@ -21,6 +21,9 @@ namespace HollowKnight.Input
             _input = new PlayerInput();
             _input.GamePlay.Move.performed += ctx => _param.inputDir = ctx.ReadValue<Vector2>().normalized;
             _input.GamePlay.Move.canceled += _ => _param.inputDir = Vector2.zero;
+            
+            _input.GamePlay.Jump.started += _ => _param.jumpHeld = true;
+            _input.GamePlay.Jump.canceled += _ => _param.jumpHeld = false;
         }
 
         private void OnEnable() => _input.Enable();

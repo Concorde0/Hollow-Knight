@@ -14,11 +14,13 @@ public class PlayerInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
-        Container.Bind<PlayerController>().FromInstance(PlayerController).AsSingle();
+        Container.BindInterfacesAndSelfTo<PlayerController>().FromInstance(PlayerController).AsSingle();
         Container.Bind<PlayerInputController>().FromInstance(inputController).AsSingle();
         Container.Bind<PlayerMotor>().FromInstance(playerMotor).AsSingle();
         Container.Bind<PlayerParam>().AsSingle();
         
         Container.Bind<CharacterData>().FromInstance(playerData).AsSingle();
+
+
     }
 }

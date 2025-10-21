@@ -33,5 +33,7 @@ namespace HollowKnight.Anim
         {
             animancer.Play(_param.inputDir.x != 0 ? _Move : _Idle);
         }
+
+        
     }
 }
