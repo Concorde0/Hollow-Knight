@@ -24,6 +24,9 @@ namespace HollowKnight.Input
             
             _input.GamePlay.Jump.started += _ => _param.jumpHeld = true;
             _input.GamePlay.Jump.canceled += _ => _param.jumpHeld = false;
+            
+            _input.GamePlay.Jump.performed += _ => _param.jumpDown = true;
+            _input.GamePlay.Jump.canceled += _ => _param.jumpDown = false;
         }
 
         private void OnEnable() => _input.Enable();

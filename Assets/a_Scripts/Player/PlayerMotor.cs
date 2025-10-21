@@ -3,7 +3,7 @@ using HollowKnight.Param;
 using UnityEngine;
 using Zenject;
 
-public class PlayerMotor : MonoBehaviour
+public class PlayerMotor : MonoBehaviour,IPlayerMotor
 {
     [SerializeField] private Transform _model;
     [SerializeField] private Rigidbody2D _rb;
@@ -15,9 +15,6 @@ public class PlayerMotor : MonoBehaviour
     private Vector2 _frameVelocity;
     private float _frameLeftGrounded = float.MinValue;
     private bool _grounded;
-    
-    private float _time;
-    
     private bool _jumpToConsume;
     private bool _bufferedJumpUsable;
     private bool _endedJumpEarly;
@@ -25,54 +22,85 @@ public class PlayerMotor : MonoBehaviour
     private float _timeJumpWasPressed;
     private bool HasBufferedJump => _bufferedJumpUsable && _time < _timeJumpWasPressed + _data.JumpBuffer;
     private bool CanUseCoyote => _coyoteUsable && !_grounded && _time < _frameLeftGrounded + _data.CoyoteTime;
-    
     private bool _cachedQueryStartInColliders;
+    private float _time;
+    
+    #region Interface
+    public event Action<bool, float> GroundedChanged;
+    public event Action Jumped;
+
+    #endregion
     
 
     [Inject]
     public void Construct(PlayerParam param, CharacterData data, ICollisionDetector collisionDetector)
     {
+        _collisionDetector = collisionDetector;
         _param = param;
         _data = data;
-        _collisionDetector = collisionDetector;
     }
 
     private void Awake()
     {
         _cachedQueryStartInColliders = Physics2D.queriesStartInColliders;
+        _frameVelocity = Vector2.zero;
+        _rb.velocity = Vector2.zero;
     }
 
     private void Update()
     {
         _time += Time.deltaTime;
+        GatherInput();
+    }
+    
+    private void GatherInput()
+    {
+        if (_data.SnapInput)
+        {
+            _param.inputDir = new Vector2(
+                Mathf.Abs(_param.inputDir.x) < _data.HorizontalDeadZoneThreshold ? 0 : Mathf.Sign(_param.inputDir.x),
+                Mathf.Abs(_param.inputDir.y) < _data.VerticalDeadZoneThreshold ? 0 : Mathf.Sign(_param.inputDir.y)
+            );
+        }
+
+        if (_param.jumpDown)
+        {
+            _jumpToConsume = true;
+            _timeJumpWasPressed = _time;
+            _param.jumpDown = false;
+        }
     }
 
     private void FixedUpdate()
     {
-        Move();
-        CheckCollisions();
+        Debug.Log($"Grounded: {_grounded}, RB.y: {_rb.velocity.y}, Frame.y: {_frameVelocity.y}, JumpDown: {_param.jumpDown}");
 
+        
+        CheckCollisions();
         HandleJump();
         HandleDirection();
         HandleGravity();
+        
+        Move();
+        ApplyMovement();
+        
         
     }
 
     private void Move()
     {
-        if(_param.inputDir.x != 0)
+        if (_param.inputDir.x != 0)
         {
             Flip();
-            Vector2 move = new Vector2(-_param.faceDir / 2, 0) * (_data.moveSpeed * Time.deltaTime);
-            transform.position += (Vector3)move;
+            _frameVelocity.x = -_param.faceDir / 2 * _data.moveSpeed;
         }
     }
     private void Flip()
     {
         if (_model == null) return;
-
+    
         _param.faceDir = (int)_model.localScale.x;
-
+    
         if (_param.inputDir.x > 0)
         {
             _param.faceDir = -2;
@@ -87,14 +115,10 @@ public class PlayerMotor : MonoBehaviour
     
     
     #region Collisions
-    
-  
-
     private void CheckCollisions()
     {
         Physics2D.queriesStartInColliders = false;
-
-        // Ground and Ceiling
+        
         bool groundHit = _collisionDetector.IsColliding(CollisionDirection.Ground);
         bool ceilingHit = _collisionDetector.IsColliding(CollisionDirection.Up);
 
@@ -105,17 +129,18 @@ public class PlayerMotor : MonoBehaviour
         if (!_grounded && groundHit)
         {
             _grounded = true;
+            _frameVelocity.y = 0f;
             _coyoteUsable = true;
             _bufferedJumpUsable = true;
             _endedJumpEarly = false;
-            // GroundedChanged?.Invoke(true, Mathf.Abs(_frameVelocity.y));
+            GroundedChanged?.Invoke(true, Mathf.Abs(_frameVelocity.y));
         }
         // Left the Ground
         else if (_grounded && !groundHit)
         {
             _grounded = false;
             _frameLeftGrounded = _time;
-            // GroundedChanged?.Invoke(false, 0);
+            GroundedChanged?.Invoke(false, 0);
         }
         
         Physics2D.queriesStartInColliders = _cachedQueryStartInColliders;
@@ -129,6 +154,7 @@ public class PlayerMotor : MonoBehaviour
    
     private void HandleJump()
     {
+        
         if (!_endedJumpEarly && !_grounded && !_param.jumpHeld && _rb.velocity.y > 0) _endedJumpEarly = true;
 
         if (!_jumpToConsume && !HasBufferedJump) return;
@@ -145,7 +171,7 @@ public class PlayerMotor : MonoBehaviour
         _bufferedJumpUsable = false;
         _coyoteUsable = false;
         _frameVelocity.y = _data.JumpPower;
-        // Jumped?.Invoke();
+        Jumped?.Invoke();
     }
 
     #endregion
@@ -177,15 +203,23 @@ public class PlayerMotor : MonoBehaviour
         }
         else
         {
-            var inAirGravity = _data.FallAcceleration;
-            if (_endedJumpEarly && _frameVelocity.y > 0) inAirGravity *= _data.JumpEndEarlyGravityModifier;
-            _frameVelocity.y = Mathf.MoveTowards(_frameVelocity.y, -_data.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime);
+            float gravity = _data.FallAcceleration;
+            if (_endedJumpEarly && _frameVelocity.y > 0)
+            {
+                gravity *= _data.JumpEndEarlyGravityModifier;
+            }
+
+            _frameVelocity.y = Mathf.MoveTowards(_frameVelocity.y, -_data.MaxFallSpeed, gravity * Time.fixedDeltaTime);
         }
     }
 
     #endregion
     
+    private void ApplyMovement() => _rb.velocity = _frameVelocity;
     
-    
-    
+}
+public interface IPlayerMotor
+{
+    public event Action<bool, float> GroundedChanged;
+    public event Action Jumped;
 }

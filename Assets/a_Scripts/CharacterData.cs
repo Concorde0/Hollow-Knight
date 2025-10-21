@@ -20,6 +20,9 @@ public class CharacterData : ScriptableObject
     public float attackPower;
     
     [Header("跳跃参数")]
+    public bool SnapInput = true;
+    public float VerticalDeadZoneThreshold = 0.3f;
+    public float HorizontalDeadZoneThreshold = 0.1f;
     public float GroundingForce = -1.5f;
     public float FallAcceleration = 110;
     public float JumpEndEarlyGravityModifier = 3;
