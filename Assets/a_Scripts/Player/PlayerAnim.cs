@@ -54,9 +54,10 @@ namespace HollowKnight.Anim
 
         private void Awake()
         {
+            _source = GetComponent<AudioSource>();
             if (_animancer != null && _Idle != null)
             {
-                _currentState = _animancer.Play(_Idle);
+                _currentState = _animancer.Play(_Idle,0.1f);
             }
         }
 
