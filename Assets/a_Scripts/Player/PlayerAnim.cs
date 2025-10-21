@@ -41,6 +41,9 @@ namespace HollowKnight.Anim
         
         private bool _grounded;
         private AnimancerState _currentState;
+        
+        private bool _isJumping;
+
 
         [Inject]
         public void Construct(PlayerParam param,IPlayerMotor playerMotor)
@@ -84,7 +87,9 @@ namespace HollowKnight.Anim
 
         private void MoveAnim()
         {
-            if (_currentState != null && (_currentState.Clip == _JumpUp || _currentState.Clip == _JumpLoop)) return;
+            if (_isJumping || (_currentState != null && 
+                               (_currentState.Clip == _JumpUp || _currentState.Clip == _JumpLoop || 
+                                _currentState.Clip == _JumpSoft || _currentState.Clip == _JumpHard))) return;
 
             _currentState = _animancer.Play(_param.inputDir.x != 0 ? _Move : _Idle);
         }
@@ -103,10 +108,10 @@ namespace HollowKnight.Anim
         
         private void OnJumped()
         {
-            if (_animancer == null) return;
-            
-            _currentState = _animancer.Play(_JumpUp);
-            
+            if (_animancer == null || _JumpUp == null) return;
+
+            _isJumping = true;
+            _currentState = _animancer.Play(_JumpUp, 0.1f);
             StartCoroutine(PlayJumpLoopWhenDone());
             
             // if (_grounded)
@@ -123,7 +128,7 @@ namespace HollowKnight.Anim
             while (_currentState.NormalizedTime < 1f)
                 yield return null;
             
-            if (_JumpLoop != null && _animancer != null)
+            if (_isJumping && !_grounded && _JumpLoop != null)
             {
                 _currentState = _animancer.Play(_JumpLoop, 0.1f);
             }
@@ -136,6 +141,7 @@ namespace HollowKnight.Anim
 
             if (grounded)
             {
+                _isJumping = false; 
                 // 根据冲击强度选择软/硬着地动画
                 AnimationClip landClip = impact > 20f ? _JumpHard : _JumpSoft;
                 if (_animancer != null && landClip != null)
@@ -143,6 +149,7 @@ namespace HollowKnight.Anim
                     // 停掉可能正在播放的跳跃动画
                     _currentState?.Stop();
                     _currentState = _animancer.Play(landClip, 0.1f);
+                    StartCoroutine(WaitForLandAnimationThenIdle());
                 }
 
                 // 音效
@@ -169,6 +176,17 @@ namespace HollowKnight.Anim
                 _currentState?.Stop();
             }
         }
+        
+        private IEnumerator WaitForLandAnimationThenIdle()
+        {
+            if (_currentState == null) yield break;
+
+            while (_currentState.NormalizedTime < 1f)
+                yield return null;
+            
+            _currentState = _animancer.Play(_param.inputDir.x != 0 ? _Move : _Idle);
+        }
+
 
 
        
