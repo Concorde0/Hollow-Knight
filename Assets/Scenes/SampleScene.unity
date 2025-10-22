@@ -504,6 +504,7 @@ GameObject:
   - component: {fileID: 1357352109}
   - component: {fileID: 1357352111}
   - component: {fileID: 1357352112}
+  - component: {fileID: 1357352113}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -754,8 +755,6 @@ MonoBehaviour:
   _JumpSoft: {fileID: 7400000, guid: 359be8f65f4e5724a8bd8405f4ffa1a1, type: 2}
   _JumpHard: {fileID: 7400000, guid: 524ef75d2464832499291280b0642aa9, type: 2}
   _maxIdleSpeed: 1.2
-  _maxTilt: 10
-  _tiltSpeed: 10
   _footsteps: []
 --- !u!114 &1357352111
 MonoBehaviour:
@@ -784,6 +783,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collisionConfig: {fileID: 11400000, guid: 2dc526fdbf176a04d802547ecc035bf9, type: 2}
+--- !u!114 &1357352113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357352096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0638f4a6dc484a6ab579ee5c7e8a3b32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

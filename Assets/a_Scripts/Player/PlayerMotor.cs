@@ -73,9 +73,6 @@ public class PlayerMotor : MonoBehaviour,IPlayerMotor
 
     private void FixedUpdate()
     {
-        Debug.Log($"Grounded: {_grounded}, RB.y: {_rb.velocity.y}, Frame.y: {_frameVelocity.y}, JumpDown: {_param.jumpDown}");
-
-        
         CheckCollisions();
         HandleJump();
         HandleDirection();

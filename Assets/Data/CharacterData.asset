@@ -16,7 +16,7 @@ MonoBehaviour:
   characterID: 1
   characterType: 0
   maxHealth: 100
-  moveSpeed: 13.92
+  moveSpeed: 8.97
   attackPower: 20
   SnapInput: 1
   VerticalDeadZoneThreshold: 0.3
@@ -27,7 +27,7 @@ MonoBehaviour:
   CoyoteTime: 0.15
   JumpBuffer: 0.2
   MaxFallSpeed: 40
-  JumpPower: 36
+  JumpPower: 32.3
   GroundDeceleration: 100
   MaxSpeed: 1
   AirDeceleration: 30
