@@ -1,4 +1,5 @@
 using HollowKnight.Param;
+using HollowKnight.Tools;
 using HollowKnight.Tools.FSM;
 using UnityEngine;
 
@@ -26,6 +27,8 @@ namespace a_Scripts.Player.States
         public override void RegisterTransitions(BaseFSM<PlayerAI> fsm)
         {
             base.RegisterTransitions(fsm);
+            var moveAnim = new FSMCondition<PlayerAI>(m => m.Param.inputDir.sqrMagnitude >= 0.1f);
+            AddCondition(moveAnim, StringConstants.AnimName.Move);
         }
     }
 }

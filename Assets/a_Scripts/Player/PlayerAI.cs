@@ -11,6 +11,7 @@ namespace a_Scripts.Player
     public class PlayerAI : MonoBehaviour
     {
         private BaseFSM<PlayerAI> _fsm;
+        [Inject] public PlayerParam Param { get; private set; }
 
         private void Start()
         {
