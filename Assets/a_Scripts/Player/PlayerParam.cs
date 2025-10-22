@@ -9,7 +9,10 @@ namespace HollowKnight.Param
         public int faceDir { get; set; }
         
         public bool jumpHeld { get; set; }
+        
         public bool jumpDown { get; set; }
+       
+        
     }
 }
 

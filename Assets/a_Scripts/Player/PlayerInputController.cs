@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -22,11 +23,21 @@ namespace HollowKnight.Input
             _input.GamePlay.Move.performed += ctx => _param.inputDir = ctx.ReadValue<Vector2>().normalized;
             _input.GamePlay.Move.canceled += _ => _param.inputDir = Vector2.zero;
             
-            _input.GamePlay.Jump.started += _ => _param.jumpHeld = true;
+            _input.GamePlay.Jump.performed += _ =>
+            {
+                _param.jumpHeld = true;
+                _param.jumpDown = true;
+            };
             _input.GamePlay.Jump.canceled += _ => _param.jumpHeld = false;
             
-            _input.GamePlay.Jump.performed += _ => _param.jumpDown = true;
-            _input.GamePlay.Jump.canceled += _ => _param.jumpDown = false;
+        }
+
+        private void FixedUpdate()
+        {
+            if (_param.jumpDown)
+            {
+                _param.jumpDown = false;
+            }
         }
 
         private void OnEnable() => _input.Enable();

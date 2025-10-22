@@ -1,5 +1,6 @@
 using a_Scripts.Player;
 using a_Scripts.Player.States;
+using HollowKnight.Anim;
 using HollowKnight.Input;
 using HollowKnight.Param;
 using HollowKnight.Tools.FSM;
@@ -8,30 +9,14 @@ using Zenject;
 
 public class PlayerInstaller : MonoInstaller
 {
-    [SerializeField] private PlayerController playerController;
-    [SerializeField] private PlayerInputController inputController;
-    [SerializeField] private PlayerMotor playerMotor;
-    [SerializeField] private Transform model; 
-    [SerializeField] private CharacterData playerData;
-
+  
+    [SerializeField] private CharacterData characterData;
+    [SerializeField] private PlayerController _playerController;
 
     public override void InstallBindings()
     {
-        // 基础绑定
-        Container.BindInterfacesAndSelfTo<PlayerMotor>().FromInstance(playerMotor).AsSingle();
-        Container.BindInterfacesAndSelfTo<PlayerController>().FromInstance(playerController).AsSingle();
-        Container.Bind<PlayerInputController>().FromInstance(inputController).AsSingle();
+        Container.BindInterfacesAndSelfTo<PlayerController>().FromInstance(_playerController).AsSingle();
         Container.Bind<PlayerParam>().AsSingle();
-        Container.Bind<CharacterData>().FromInstance(playerData).AsSingle();
-        
-        // FSM绑定
-        Container.Bind<BaseFSM<PlayerController>>().AsSingle().WithArguments(playerController);
-
-        // PlayerAI绑定（假设挂在同一个GameObject上）
-        Container.Bind<PlayerAI>().FromComponentInHierarchy().AsSingle();
-
-       
-
-
+        Container.Bind<CharacterData>().FromInstance(characterData).AsSingle();
     }
 }
