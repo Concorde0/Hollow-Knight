@@ -10,6 +10,7 @@ public class PlayerMotor : MonoBehaviour
     [Inject] private PlayerParam _param;
     [Inject] private CharacterData _data;
     [Inject] private ICollisionDetector _collisionDetector;
+    [Inject] private PlayerAnim _anim;
     [SerializeField] private Transform _model;
     [SerializeField] private Rigidbody2D _rb;
 
@@ -142,6 +143,7 @@ public class PlayerMotor : MonoBehaviour
         _bufferedJumpUsable = false;
         _coyoteUsable = false;
         _frameVelocity.y = _data.JumpPower;
+        _anim.TransitionTo(StringConstants.AnimName.JumpUp,0.1f);
     }
 
     private void HandleDirection()

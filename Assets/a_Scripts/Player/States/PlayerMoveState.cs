@@ -2,7 +2,7 @@ using HollowKnight.Tools.FSM;
 
 namespace a_Scripts.Player.States
 {
-    public class PlayerMoveState : FSMState<PlayerController>
+    public class PlayerMoveState : FSMState<PlayerAI>
     {
         
     }

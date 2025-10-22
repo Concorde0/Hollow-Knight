@@ -465,8 +465,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c02c2d498c90f9419305c89ee5e1b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterData: {fileID: 11400000, guid: 8834236f7da853e43a5a5772bde4fb65, type: 2}
+  _characterData: {fileID: 11400000, guid: 8834236f7da853e43a5a5772bde4fb65, type: 2}
+  _animancerSetting: {fileID: 11400000, guid: 611b9181726627d42911a8b7bac26f20, type: 2}
   _playerController: {fileID: 1357352112}
+  _playerMotor: {fileID: 1357352111}
+  _playerAnim: {fileID: 1357352110}
 --- !u!4 &1273851057
 Transform:
   m_ObjectHideFlags: 0

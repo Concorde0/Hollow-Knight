@@ -7,7 +7,6 @@ public enum CharacterType
     Enemy   
 }
 
-
 [CreateAssetMenu(fileName = "CharacterData", menuName = "Game/Character Data")]
 public class CharacterData : ScriptableObject
 {

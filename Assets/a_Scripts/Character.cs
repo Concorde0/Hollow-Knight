@@ -1,11 +1,14 @@
 using UnityEngine;
 using System.Collections.Generic;
+using a_Scripts;
 using Zenject;
 
 public abstract class Character : MonoBehaviour, ICollisionDetector
 {
     [SerializeField] private CollisionConfig collisionConfig;
     [Inject] private CharacterData _data;
+    [Inject] private AnimancerSetting _animSetting;
+    
 
     private Dictionary<CollisionDirection, bool> collisionStates = new();
 
