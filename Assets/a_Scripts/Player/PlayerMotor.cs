@@ -2,8 +2,10 @@ using System;
 using HollowKnight.Anim;
 using HollowKnight.Param;
 using HollowKnight.Tools;
+using RPG.Timer;
 using UnityEngine;
 using Zenject;
+using Timer = System.Timers.Timer;
 
 public class PlayerMotor : MonoBehaviour
 {
@@ -31,12 +33,20 @@ public class PlayerMotor : MonoBehaviour
     private bool CanUseCoyote => _coyoteUsable && !_grounded && _time < _frameLeftGrounded + _data.CoyoteTime;
 
     private float _time;
+    
+    public event Action<string> OnAnimEvent;
 
+    private void Awake()
+    {
+        OnAnimEvent += HandleAnimEvent;
+    }
+    
 
     private void Update()
     {
         GatherInput();
         _time += Time.deltaTime;
+        
     }
 
     private void FixedUpdate()
@@ -61,7 +71,7 @@ public class PlayerMotor : MonoBehaviour
     
     private void Flip()
     {
-        _param.faceDir = (int)_model.localScale.x ;
+        _param.faceDir = (int)_model.localScale.x;
         if (_param.inputDir.x > 0)
         {
             _param.faceDir = -2;
@@ -113,12 +123,16 @@ public class PlayerMotor : MonoBehaviour
             _coyoteUsable = true;
             _bufferedJumpUsable = true;
             _endedJumpEarly = false;
+            OnAnimEvent?.Invoke(StringConstants.AnimName.Idle);
+            
+            
         }
         else if(_grounded && !groundHit)
         {
             // 地面状态但是地面检测失败，代表要离开地面了
             _grounded = false;
             _frameLeftGrounded = _time;
+            
         }
         
         Physics2D.queriesStartInColliders = _cachedQueryStartInColliders;
@@ -143,7 +157,9 @@ public class PlayerMotor : MonoBehaviour
         _bufferedJumpUsable = false;
         _coyoteUsable = false;
         _frameVelocity.y = _data.JumpPower;
-        _anim.TransitionTo(StringConstants.AnimName.JumpUp,0.1f);
+
+        _param.canJump = true;
+        OnAnimEvent?.Invoke(StringConstants.AnimName.JumpUp);
     }
 
     private void HandleDirection()
@@ -172,8 +188,26 @@ public class PlayerMotor : MonoBehaviour
             _frameVelocity.y = Mathf.MoveTowards(_frameVelocity.y, -_data.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime);
         }
     }
-
-   
     
+    public bool CheckCollider(CollisionDirection dir)
+    {
+        return _collisionDetector.IsColliding(dir);
+    }
+    
+    private void HandleAnimEvent(string animName)
+    {
+        _anim.TransitionTo(animName, 0.1f);
+    }
+    
+    public void TriggerAnimEvent(string animName)
+    {
+        OnAnimEvent?.Invoke(animName);
+    }
+
+    public float GetAnimLength(string name)
+    {
+        return _anim.GetAnimLength(name);
+    }
+
     
 }

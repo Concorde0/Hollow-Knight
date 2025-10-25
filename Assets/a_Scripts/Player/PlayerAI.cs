@@ -12,6 +12,7 @@ namespace a_Scripts.Player
     {
         private BaseFSM<PlayerAI> _fsm;
         [Inject] public PlayerParam Param { get; private set; }
+        [Inject] public PlayerMotor Motor { get; private set; }
 
         private void Start()
         {
@@ -19,10 +20,7 @@ namespace a_Scripts.Player
             
             _fsm.AddState(StringConstants.AnimName.Idle, new PlayerIdleState());
             _fsm.AddState(StringConstants.AnimName.Move, new PlayerMoveState());
-            _fsm.AddState(StringConstants.AnimName.JumpUp,new PlayerJumpUpState());
-            _fsm.AddState(StringConstants.AnimName.JumpLoop,new PlayerJumpLoopState());
-            _fsm.AddState(StringConstants.AnimName.JumpSoft, new PlayerJumpSoftState());
-            _fsm.AddState(StringConstants.AnimName.JumpHard, new PlayerJumpHardState());
+            _fsm.AddState(StringConstants.AnimName.Jump,new PlayerJumpState());
             _fsm.SetDefault(StringConstants.AnimName.Idle);
         }
 

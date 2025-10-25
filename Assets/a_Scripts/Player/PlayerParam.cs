@@ -11,6 +11,8 @@ namespace HollowKnight.Param
         public bool jumpHeld { get; set; }
         
         public bool jumpDown { get; set; }
+
+        public bool canJump { get; set; } = false;
     }
 }
 

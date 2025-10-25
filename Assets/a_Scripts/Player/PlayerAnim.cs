@@ -31,6 +31,9 @@ namespace HollowKnight.Anim
             AddState(StringConstants.AnimName.Idle, _animSetting.GetParam(StringConstants.AnimName.Idle).clip);
             AddState(StringConstants.AnimName.Move, _animSetting.GetParam(StringConstants.AnimName.Move).clip);
             AddState(StringConstants.AnimName.JumpUp, _animSetting.GetParam(StringConstants.AnimName.JumpUp).clip);
+            AddState(StringConstants.AnimName.JumpSoft,_animSetting.GetParam(StringConstants.AnimName.JumpSoft).clip);
+            AddState(StringConstants.AnimName.JumpHard, _animSetting.GetParam(StringConstants.AnimName.JumpHard).clip);
+            AddState(StringConstants.AnimName.JumpLoop, _animSetting.GetParam(StringConstants.AnimName.JumpLoop).clip);
         }
         
 
@@ -44,6 +47,19 @@ namespace HollowKnight.Anim
             else
             {
                 Debug.LogWarning($"未找到动画状态: {name}");
+            }
+        }
+        
+        public float GetAnimLength(string name)
+        {
+            if (_animancerStates.TryGetValue(name, out var state))
+            {
+                return state.Duration;
+            }
+            else
+            {
+                Debug.LogWarning($"未找到动画状态: {name}");
+                return 0f;
             }
         }
 
@@ -60,8 +76,7 @@ namespace HollowKnight.Anim
             _animancerStates[name] = state;
         }
         
-        
-
+       
 
     }
 }

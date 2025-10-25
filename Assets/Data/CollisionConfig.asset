@@ -16,7 +16,7 @@ MonoBehaviour:
   - direction: 0
     localOffset: {x: 0, y: -0.48, z: 0}
     localDirection: {x: 0, y: -1, z: 0}
-    checkDistance: 0.1
+    checkDistance: 0.09
     collisionMask:
       serializedVersion: 2
       m_Bits: 64

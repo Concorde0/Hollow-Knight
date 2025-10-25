@@ -1,109 +1,170 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace HollowKnight.Tools
+namespace RPG.Timer
 {
-    public class TimerManager : MonoBehaviour
-{
-    public event Action<string> OnTaskStarted;
-    public event Action<string> OnTaskCompleted;
-
-    private Queue<TimerTask> taskQueue = new Queue<TimerTask>();
-    private bool isRunning = false;
-    private bool isPaused = false;
-    private Coroutine queueCoroutine;
-
-    public bool IsRunning => isRunning;
-    public bool IsPaused => isPaused;
-
-    public void EnqueueTask(string id, float delaySeconds, Action callback, string tag = "")
+   public class Timer
     {
-        taskQueue.Enqueue(new TimerTask(id, delaySeconds, callback, tag));
-        if (!isRunning && !isPaused)
+        private float Duration { get; set; }
+        private float StartTime { get; set; }
+        
+        public Timer(float duration)
         {
-            queueCoroutine = StartCoroutine(RunQueue());
+            Duration = duration;
+            StartTime = Time.time;
+        }
+    
+        public void ReStart(float? newDuration = null)
+        {
+            Duration = newDuration ?? Duration;
+            StartTime = Time.time;
+        }
+        
+        public float Elapsed => Time.time - StartTime;
+        public bool IsFinished => Elapsed >= Duration;
+    }
+
+    public class FrameTimer
+    {
+        private int MaxFrames { get; set; }
+        private int StartFrame { get; set; }
+        
+        public int ElapsedFrames => Time.frameCount - StartFrame;
+        public bool IsFinished => ElapsedFrames >= MaxFrames;
+        
+        // 帧计时转换为秒。
+        public float ElapsedTime => ElapsedFrames * Time.deltaTime;
+        public float DurationTime => MaxFrames * Time.deltaTime;
+
+        public FrameTimer(int maxFrames)
+        {
+            MaxFrames = maxFrames;
+            StartFrame = Time.frameCount;
+        }
+        
+        public void ReStart(int? newMaxFrames = null)
+        {
+            MaxFrames = newMaxFrames ?? MaxFrames;
+            StartFrame = Time.frameCount;
         }
     }
-
-    public void CancelTaskById(string id)
+    
+    public class TimerManager : Singleton<TimerManager>
     {
-        taskQueue = new Queue<TimerTask>(taskQueue.Where(t => t.Id != id));
-    }
-
-    public void PauseQueue()
-    {
-        if (isRunning && !isPaused)
+        private Dictionary<string, Timer> _timers = new();
+        private Dictionary<string, FrameTimer> _frameTimers = new();
+        
+        //Time BASE
+    
+        public void StartTimer(string key, float duration)
         {
-            isPaused = true;
-            StopCoroutine(queueCoroutine);
+            if (_timers.ContainsKey(key))
+                _timers[key].ReStart(duration);
+            else
+                _timers[key] = new Timer(duration);
         }
-    }
-
-    public void ResumeQueue()
-    {
-        if (isPaused)
+    
+        public bool IsFinished(string key)
         {
-            isPaused = false;
-            queueCoroutine = StartCoroutine(RunQueue());
+            return _timers.TryGetValue(key, out var timer) && timer.IsFinished;
         }
-    }
 
-    public void ClearQueue()
-    {
-        StopAllCoroutines();
-        taskQueue.Clear();
-        isRunning = false;
-        isPaused = false;
-    }
-
-    public List<string> GetPendingTasks()
-    {
-        return taskQueue.Select(t => t.Id).ToList();
-    }
-
-    public void ForceExecuteNext()
-    {
-        if (taskQueue.Count > 0)
+        public bool IsElapsedInRange(string key, float minTime, float maxTime)
         {
-            TimerTask task = taskQueue.Dequeue();
-            OnTaskStarted?.Invoke(task.Id);
-            task.Callback?.Invoke();
-            OnTaskCompleted?.Invoke(task.Id);
+            if (_timers.TryGetValue(key, out var timer))
+            {
+                float elapsed = timer.Elapsed;
+                return elapsed >= minTime && elapsed <= maxTime;
+            }
+            return false;
         }
-    }
-
-    private IEnumerator RunQueue()
-    {
-        isRunning = true;
-        while (taskQueue.Count > 0)
+    
+        public float GetElapsed(string key)
         {
-            TimerTask task = taskQueue.Dequeue();
-            OnTaskStarted?.Invoke(task.Id);
-            yield return new WaitForSeconds(task.DelaySeconds);
-            task.Callback?.Invoke();
-            OnTaskCompleted?.Invoke(task.Id);
+            return _timers.TryGetValue(key, out var timer) ? timer.Elapsed : 0f;
         }
-        isRunning = false;
-    }
-
-    private class TimerTask
-    {
-        public string Id { get; }
-        public float DelaySeconds { get; }
-        public Action Callback { get; }
-        public string Tag { get; }
-
-        public TimerTask(string id, float delaySeconds, Action callback, string tag)
+    
+        public void Restart(string key)
         {
-            Id = id;
-            DelaySeconds = delaySeconds;
-            Callback = callback;
-            Tag = tag;
+            if (_timers.TryGetValue(key, out var timer))
+                timer.ReStart();
+        }
+
+        // Frame Base
+        public void StartTimer(string key, int maxFrames)
+        {
+            if (_frameTimers.ContainsKey(key))
+                _frameTimers[key].ReStart(maxFrames);
+            else
+                _frameTimers[key] = new FrameTimer(maxFrames);
+        }
+
+        public bool IsFrameFinished(string key)
+        {
+            return _frameTimers.TryGetValue(key, out var frameTimer) && frameTimer.IsFinished;
+        }
+
+        public bool IsFrameInRange(string key, int minFrames, int maxFrames)
+        {
+            if (_frameTimers.TryGetValue(key, out var frameTimer))
+            {
+                int elapsed = frameTimer.ElapsedFrames;
+                return elapsed >= minFrames && elapsed <= maxFrames;
+            }
+            return false;
+        }
+
+        public int GetElapsedFrames(string key)
+        {
+            return _frameTimers.TryGetValue(key, out var frameTimer) ? frameTimer.ElapsedFrames : 0;
+        }
+
+        public float GetElapsedTimeFromFrames(string key)
+        {
+            return _frameTimers.TryGetValue(key, out var frameTimer) ? frameTimer.ElapsedTime : 0f;
+        }
+
+        public float GetDurationTimeFromFrames(string key)
+        {
+            return _frameTimers.TryGetValue(key, out var frameTimer) ? frameTimer.DurationTime : 0f;
+        }
+
+        public void RestartFrame(string key)
+        {
+            if (_frameTimers.TryGetValue(key, out var frameTimer))
+                frameTimer.ReStart();
+        }
+    
+        //Utilities
+        
+        public void Remove(string key)
+        {
+            _timers.Remove(key);
+            _frameTimers.Remove(key);
+        }
+    
+        public bool Exists(string key)
+        {
+            return _timers.ContainsKey(key) || _frameTimers.ContainsKey(key);
+        }
+        
+        public void CleanupFinished()
+        {
+            var toRemove = new List<string>();
+            foreach (var kvp in _timers)
+                if (kvp.Value.IsFinished)
+                    toRemove.Add(kvp.Key);
+            foreach (var key in toRemove)
+                _timers.Remove(key);
+            
+            toRemove.Clear();
+            foreach (var kvp in _frameTimers)
+                if (kvp.Value.IsFinished)
+                    toRemove.Add(kvp.Key);
+            foreach (var key in toRemove)
+                _frameTimers.Remove(key);
         }
     }
 }
-}
-

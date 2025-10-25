@@ -55,6 +55,48 @@ MonoBehaviour:
       _NormalizedStartTime: NaN
     clipGroup: []
     infoGroup: []
+  - name: JumpLoop
+    type: 0
+    enterTime: 0.1
+    clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 7400000, guid: 8c650a0524db8914d80df3907e362479, type: 2}
+      _NormalizedStartTime: NaN
+    clipGroup: []
+    infoGroup: []
+  - name: JumpSoft
+    type: 0
+    enterTime: 0.1
+    clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 7400000, guid: 359be8f65f4e5724a8bd8405f4ffa1a1, type: 2}
+      _NormalizedStartTime: NaN
+    clipGroup: []
+    infoGroup: []
+  - name: JumpHard
+    type: 0
+    enterTime: 0.1
+    clip:
+      _FadeDuration: 0.25
+      _Speed: 1
+      _Events:
+        _NormalizedTimes: []
+        _Callbacks: []
+        _Names: []
+      _Clip: {fileID: 7400000, guid: 524ef75d2464832499291280b0642aa9, type: 2}
+      _NormalizedStartTime: NaN
+    clipGroup: []
+    infoGroup: []
   references:
     version: 2
     RefIds: []
